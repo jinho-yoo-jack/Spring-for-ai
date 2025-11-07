@@ -1,0 +1,41 @@
+POST http://localhost:8080/api/chat/simple \
+Content-Type: application/json
+
+{
+  "message": "안녕하세요!"
+}
+
+### 2. 대화 히스토리를 유지하는 채팅
+POST http://localhost:8080/api/chat \
+Content-Type: application/json
+
+{
+  "message": "Spring AI에 대해 설명해줘",
+  "conversationId": null
+}
+
+### 3. 같은 대화 이어서 하기
+POST http://localhost:8080/api/chat \
+Content-Type: application/json
+
+{
+  "message": "방금 설명한 내용을 요약해줘",
+  "conversationId": "이전-응답의-conversationId"
+}
+
+### 4. 스트리밍 채팅
+POST http://localhost:8080/api/chat/stream \
+Content-Type: application/json
+{"message": "긴 이야기를 들려줘"}
+
+### Postman/Insomnia 테스트
+
+**요청:**
+```
+POST http://localhost:8080/api/chat
+Content-Type: application/json
+
+{
+  "message": "Spring Boot와 Spring AI의 차이점은?",
+  "conversationId": null
+}
