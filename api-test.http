@@ -1,4 +1,4 @@
-POST http://localhost:8080/api/chat/simple \
+POST http://localhost:8080/api/chat/simple
 Content-Type: application/json
 
 {
@@ -6,7 +6,7 @@ Content-Type: application/json
 }
 
 ### 2. 대화 히스토리를 유지하는 채팅
-POST http://localhost:8080/api/chat \
+POST http://localhost:8080/api/chat
 Content-Type: application/json
 
 {
@@ -15,7 +15,7 @@ Content-Type: application/json
 }
 
 ### 3. 같은 대화 이어서 하기
-POST http://localhost:8080/api/chat \
+POST http://localhost:8080/api/chat
 Content-Type: application/json
 
 {
@@ -24,14 +24,15 @@ Content-Type: application/json
 }
 
 ### 4. 스트리밍 채팅
-POST http://localhost:8080/api/chat/stream \
+POST http://localhost:8080/api/chat/stream
 Content-Type: application/json
-{"message": "긴 이야기를 들려줘"}
+
+{
+  "message": "긴 이야기를 들려줘"
+}
 
 ### Postman/Insomnia 테스트
 
-**요청:**
-```
 POST http://localhost:8080/api/chat
 Content-Type: application/json
 
