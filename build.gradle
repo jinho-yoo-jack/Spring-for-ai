@@ -41,6 +41,14 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Retrofit and OkHttp
+    implementation("com.squareup.retrofit2:retrofit:2.10.0")
+    implementation("com.squareup.retrofit2:converter-jackson:2.10.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.10.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.10.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.0")
+    implementation("com.google.code.gson:gson")
 }
 
 dependencyManagement {
