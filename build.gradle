@@ -22,19 +22,18 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }  // 추가 권장
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
 }
 
 ext {
-    set('springAiVersion', "1.0.3")
+    set('springAiVersion', "1.0.0-M3")
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.ai:spring-ai-starter-model-anthropic'
-    implementation 'org.springframework.ai:spring-ai-starter-model-postgresml-embedding'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
@@ -42,20 +41,25 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // Retrofit and OkHttp
-    implementation("com.squareup.retrofit2:retrofit:2.10.0")
-    implementation("com.squareup.retrofit2:converter-jackson:2.10.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.10.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.10.0")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.0")
-    implementation("com.google.code.gson:gson")
+    // For AI - Spring AI dependencies
+    implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
+    implementation 'org.springframework.ai:spring-ai-anthropic-spring-boot-starter'
+    implementation 'org.springframework.ai:spring-ai-ollama-spring-boot-starter'
+
+    // For Retrofit and OkHttp
+    implementation 'com.squareup.retrofit2:retrofit:2.10.0'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.10.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.10.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.10.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
+    implementation 'com.google.code.gson:gson'
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
-    }
-}
+//dependencyManagement {
+//    imports {
+//        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+//    }
+//}
 
 tasks.named('test') {
     useJUnitPlatform()

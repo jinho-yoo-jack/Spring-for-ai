@@ -2,27 +2,31 @@ package org.sprain.ai.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sprain.ai.dto.ChatResponse;
-import org.sprain.ai.dto.TokenUsage;
 import org.sprain.ai.global.exception.ContextLengthExceededException;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.sprain.ai.dto.ChatResponse;
+import org.sprain.ai.dto.TokenUsage;
 import reactor.core.publisher.Flux;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class ClaudeChatService implements ChatService {
-    private final ChatClient chatClient;
+
+    private ChatClient chatClient;
+
+    public ClaudeChatService(@Qualifier("ollamaChatClient") ChatClient chatClient) {
+        this.chatClient = chatClient;
+    }
 
     private final Map<String, List<Message>> conversations = new ConcurrentHashMap<>();
-
 
     @Override
     public ChatResponse chat(String question) {
@@ -40,7 +44,7 @@ public class ClaudeChatService implements ChatService {
         history.add(userMessage);
         org.springframework.ai.chat.model.ChatResponse response = promptWithHistory(question, history);
 
-        String assistantResponse = response.getResult().getOutput().getText();
+        String assistantResponse = response.getResult().getOutput().getContent();
         if (assistantResponse == null || assistantResponse.isBlank()) {
             throw new IllegalStateException("assistant response is null or blank");
         }
@@ -52,7 +56,8 @@ public class ClaudeChatService implements ChatService {
         TokenUsage tokenUsage = null;
         if (metadata != null && metadata.getUsage() != null) {
             var usage = metadata.getUsage();
-            tokenUsage = new TokenUsage(usage.getPromptTokens(), usage.getCompletionTokens(), usage.getTotalTokens());
+            Integer completionTokens = usage.getPromptTokens().intValue();
+            tokenUsage = new TokenUsage(usage.getPromptTokens().intValue(), completionTokens, usage.getTotalTokens().intValue());
         }
         return ChatResponse.of(assistantResponse, conversationId, tokenUsage);
     }
@@ -70,40 +75,36 @@ public class ClaudeChatService implements ChatService {
     @Override
     public void clearConversationBy(String conversationId) {
         conversations.remove(conversationId);
-
     }
 
     @Override
     public void clearAllConversations() {
         conversations.clear();
-
     }
 
     private String prompt(String question) {
         return chatClient.prompt()
-            .user(question)
-            .call()
-            .content();
+                .user(question)
+                .call()
+                .content();
     }
 
     private org.springframework.ai.chat.model.ChatResponse promptWithHistory(String question, List<Message> history) {
         try {
             return chatClient.prompt()
-                .messages(history)
-                .user(question)
-                .call()
-                .chatResponse();
+                    .messages(history)
+                    .user(question)
+                    .call()
+                    .chatResponse();
         } catch (ContextLengthExceededException e) {
             throw new ContextLengthExceededException(e.getMessage());
         }
-
     }
 
     private Flux<String> promptStream(String question) {
         return chatClient.prompt()
-            .user(question)
-            .stream()
-            .content();
+                .user(question)
+                .stream()
+                .content();
     }
-
 }
