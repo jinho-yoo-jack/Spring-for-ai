@@ -40,6 +40,13 @@ public class AnthropicConfig {
         );
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * ChatClient Bean 생성
+     * Spring AI가 자동으로 AnthropicChatModel을 주입합니다
+     */
+>>>>>>> b4d90a0 (ADD: Ollama Model)
     @Bean(name = "claudeChatClient")
     public ChatClient chatClient(ChatClient.Builder builder) {
         return builder
