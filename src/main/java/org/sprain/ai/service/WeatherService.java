@@ -16,7 +16,7 @@ import java.util.List;
 public class WeatherService {
     private final WeatherAPIs weatherAPIs;
 
-    public String getWeather() throws IOException {
+    public String getWeather(String city) throws IOException {
         String authKey = "FAVWlSB7Qa6FVpUgezGuHw";
         int stn = 108;
         return weatherAPIs.getWeather(authKey, stn).execute().body();

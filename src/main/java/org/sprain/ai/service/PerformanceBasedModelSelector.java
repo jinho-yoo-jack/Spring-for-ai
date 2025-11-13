@@ -1,21 +1,27 @@
 package org.sprain.ai.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class PerformanceBasedModelSelector {
 
-    @Qualifier("claudeSonnet")
     private final ChatModel claudeSonnet;
 
-    @Qualifier("claudeHaiku")
     private final ChatModel claudeHaiku;
 
-    @Qualifier("gpt4o")
     private final ChatModel gpt4o;
+
+    public PerformanceBasedModelSelector(
+            @Qualifier("claudeChatModel") ChatModel claudeSonnet,
+            @Qualifier("claudeChatModel") ChatModel claudeHaiku,
+            @Qualifier("claudeChatModel") ChatModel gpt4o
+    ) {
+        this.claudeSonnet = claudeSonnet;
+        this.claudeHaiku = claudeHaiku;
+        this.gpt4o = gpt4o;
+    }
 
     /**
      * 응답 속도 우선

@@ -1,4 +1,4 @@
-package org.sprain.ai.config;
+package org.sprain.ai.config.model;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Setter;
@@ -31,22 +31,16 @@ public class AnthropicConfig {
 
     @Bean(name = "claudeChatModel")
     public AnthropicChatModel anthropicChatModel(AnthropicApi anthropicApi) {
+        String modelName = "claude-3-sonnet-20240229";
         return new AnthropicChatModel(anthropicApi,
                 AnthropicChatOptions.builder()
-                        .withModel("claude-3-5-sonnet-20241022")
-                        .withTemperature(0.7)
-                        .withMaxTokens(2048)
+                        .withModel(modelName)
+                        .withTemperature(0.5)
+                        .withMaxTokens(500)
                         .build()
         );
     }
 
-<<<<<<< HEAD
-=======
-    /**
-     * ChatClient Bean 생성
-     * Spring AI가 자동으로 AnthropicChatModel을 주입합니다
-     */
->>>>>>> b4d90a0 (ADD: Ollama Model)
     @Bean(name = "claudeChatClient")
     public ChatClient chatClient(ChatClient.Builder builder) {
         return builder

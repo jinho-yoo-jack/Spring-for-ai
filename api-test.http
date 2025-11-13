@@ -56,3 +56,12 @@ GET https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php?stn=108&authKey=FAVWlS
 ###
 Asdfg1234!@#$
 FAVWlSB7Qa6FVpUgezGuHw
+
+
+###
+POST http://localhost:8080/api/mcp/chat/simple
+Content-Type: application/json
+
+{
+  "message": "오늘 서울 날씨 어때?"
+}

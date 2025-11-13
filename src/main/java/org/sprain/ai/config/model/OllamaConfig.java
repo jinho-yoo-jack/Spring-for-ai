@@ -1,4 +1,4 @@
-package org.sprain.ai.config;
+package org.sprain.ai.config.model;
 
 import lombok.Setter;
 import org.springframework.ai.chat.client.ChatClient;
@@ -22,11 +22,12 @@ public class OllamaConfig {
     @Primary
     public OllamaChatModel ollamaChatModel(OllamaApi ollamaApi) {
         return new OllamaChatModel(
-            ollamaApi,
-            OllamaOptions.builder()
-                .withModel("qwen2.5:3b")
-                .withTemperature(0.7)
-                .build()
+                ollamaApi,
+                OllamaOptions.builder()
+                        .withModel("qwen2.5:3b")
+                        .withTemperature(0.5)
+                        .withNumPredict(500)
+                        .build()
         );
     }
 

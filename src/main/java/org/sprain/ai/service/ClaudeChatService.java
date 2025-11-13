@@ -20,9 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ClaudeChatService implements ChatService {
 
-    private ChatClient chatClient;
+    private final ChatClient chatClient;
 
-    public ClaudeChatService(@Qualifier("ollamaChatClient") ChatClient chatClient) {
+    public ClaudeChatService(@Qualifier("claudeChatClient") ChatClient chatClient) {
         this.chatClient = chatClient;
     }
 

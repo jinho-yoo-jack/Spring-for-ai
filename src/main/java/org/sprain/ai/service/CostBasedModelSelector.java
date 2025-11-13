@@ -1,29 +1,39 @@
 package org.sprain.ai.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static org.sprain.ai.config.model.ModelHelper.getModelName;
+
 @Service
-@RequiredArgsConstructor
 public class CostBasedModelSelector {
 
-    @Qualifier("claudeSonnet")
     private final ChatModel claudeSonnet;     // $3/$15 per 1M tokens
 
-    @Qualifier("claudeHaiku")
     private final ChatModel claudeHaiku;      // $1/$5 per 1M tokens
 
-    @Qualifier("gpt4o")
     private final ChatModel gpt4o;            // $2.5/$10 per 1M tokens
 
-    @Qualifier("gpt35")
     private final ChatModel gpt35;            // $0.5/$1.5 per 1M tokens
 
-    @Qualifier("llama3")
     private final ChatModel llama3;           // 무료 (로컬)
+
+    public CostBasedModelSelector(
+            @Qualifier("claudeChatModel") ChatModel claueSonnet,
+            @Qualifier("claudeChatModel") ChatModel claudeHaiku,
+            @Qualifier("claudeChatModel") ChatModel gpt4o,
+            @Qualifier("claudeChatModel") ChatModel gpt35,
+            @Qualifier("claudeChatModel") ChatModel llama3
+    ) {
+        this.claudeSonnet = claueSonnet;
+        this.claudeHaiku = claudeHaiku;
+        this.gpt4o = gpt4o;
+        this.gpt35 = gpt35;
+        this.llama3 = llama3;
+    }
 
     /**
      * 예상 토큰 수에 따라 모델 선택
@@ -77,11 +87,11 @@ public class CostBasedModelSelector {
     public double estimateCost(ChatModel model, int inputTokens, int outputTokens) {
         // 모델별 비용 (per 1M tokens)
         Map<String, double[]> pricing = Map.of(
-            "claude-sonnet", new double[]{3.0, 15.0},
-            "claude-haiku", new double[]{1.0, 5.0},
-            "gpt-4o", new double[]{2.5, 10.0},
-            "gpt-3.5", new double[]{0.5, 1.5},
-            "llama3", new double[]{0.0, 0.0}
+                "claude-sonnet", new double[]{3.0, 15.0},
+                "claude-haiku", new double[]{1.0, 5.0},
+                "gpt-4o", new double[]{2.5, 10.0},
+                "gpt-3.5", new double[]{0.5, 1.5},
+                "llama3", new double[]{0.0, 0.0}
         );
 
         String modelName = getModelName(model);

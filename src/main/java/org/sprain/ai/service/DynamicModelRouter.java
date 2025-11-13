@@ -8,6 +8,8 @@ import org.sprain.ai.dto.TaskType;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 
+import static org.sprain.ai.config.model.ModelHelper.getModelName;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -51,10 +53,6 @@ public class DynamicModelRouter {
             case QUALITY -> perfSelector.selectBestQualityModel();
             case BALANCED -> perfSelector.selectBalancedModel();
         };
-    }
-
-    private String getModelName(ChatModel model) {
-        return model.getDefaultOptions().getModel();
     }
 
     /**
