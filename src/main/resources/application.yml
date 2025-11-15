@@ -10,6 +10,12 @@ spring:
     username: tony
     password: stark
   ai:
+    mcp:
+      client:
+        sse:
+          connections:
+            weather-server:
+              url: http://localhost:8080
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
       chat:

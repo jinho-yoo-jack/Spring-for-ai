@@ -1,4 +1,4 @@
-package org.sprain.ai.service;
+package org.sprain.ai.global.helper.ai;
 
 import org.sprain.ai.dto.ProductAnalysis;
 import org.springframework.ai.chat.client.ChatClient;

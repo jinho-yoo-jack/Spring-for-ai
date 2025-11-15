@@ -1,6 +1,5 @@
-package org.sprain.ai.service;
+package org.sprain.ai.global.helper.ai;
 
-import lombok.RequiredArgsConstructor;
 import org.sprain.ai.dto.TaskType;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;

@@ -1,45 +1,124 @@
 package org.sprain.ai.config.model;
 
+import io.modelcontextprotocol.client.McpSyncClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.model.function.FunctionCallback;
-import org.springframework.ai.model.function.FunctionCallbackWrapper;
+import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.ollama.OllamaChatModel;
-import org.sprain.ai.tools.weather.dto.WeatherRequest;
-import org.sprain.ai.tools.weather.dto.WeatherResponse;
+import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
-import java.util.function.Function;
+import java.util.List;
 
 @Slf4j
 @Configuration
 public class ChatClientConfig {
 
     /**
-     * ✅ 방법 1: FunctionCallback으로 변환 (권장)
+     * Claude ChatClient
      */
-    @Bean(name = "mcpChatClient")
-    public ChatClient chatClient(
-//            AnthropicChatModel chatModel,
-            OllamaChatModel chatModel,
-            Function<WeatherRequest, WeatherResponse> getCurrentWeather
+    @Bean(name = "claudeChatClient")
+    @Primary
+    public ChatClient claudeChatClient(
+        AnthropicChatModel anthropicChatModel,
+        @Autowired(required = false) ToolCallbackProvider weatherToolCallbackProvider,
+        @Autowired(required = false) List<McpSyncClient> mcpSyncClients
     ) {
-        log.info("ChatClient 초기화 - Tool 등록");
+        log.info("=== Claude ChatClient 초기화 ===");
 
-        // Function을 FunctionCallback으로 래핑
-        FunctionCallback weatherCallback = FunctionCallbackWrapper.builder(getCurrentWeather)
-                .withName("getCurrentWeather")
-                .withDescription("특정 도시의 현재 날씨 정보를 조회합니다. " +
-                        "도시 이름(Seoul, Busan 등)을 입력하면 해당 지역의 기온, 습도, 풍속, 기압 등 상세한 날씨 정보를 제공합니다.")
-                .withInputType(WeatherRequest.class)
+        ChatClient.Builder builder = ChatClient.builder(anthropicChatModel);
+
+        // 1. Weather Function Tool 등록
+        if (weatherToolCallbackProvider != null) {
+            log.info("✅ Weather Tool 등록");
+            builder = builder.defaultToolCallbacks(weatherToolCallbackProvider);
+        }
+
+        // 2. MCP Tools 등록 (Builder 패턴 사용)
+        if (mcpSyncClients != null && !mcpSyncClients.isEmpty()) {
+            log.info("✅ MCP Clients: {} 개", mcpSyncClients.size());
+
+            // ✅ Builder 패턴으로 생성 (Deprecated 회피)
+            SyncMcpToolCallbackProvider mcpToolProvider = SyncMcpToolCallbackProvider.builder()
+                .mcpClients(mcpSyncClients)
                 .build();
 
-        log.info("FunctionCallback 생성 완료: {}", weatherCallback);
+            builder = builder.defaultToolCallbacks(mcpToolProvider);
 
-        return ChatClient.builder(chatModel)
-                .defaultFunctions(weatherCallback)  // ✅ FunctionCallback으로 전달
+            // MCP Client 정보 로깅
+            mcpSyncClients.forEach(client -> {
+                log.info("  - MCP Client: {}", client.getClass().getSimpleName());
+            });
+        }
+
+        ChatClient chatClient = builder.build();
+        log.info("=== Claude ChatClient 초기화 완료 ===");
+
+        return chatClient;
+    }
+
+    /**
+     * Ollama ChatClient
+     */
+    @Bean(name = "ollamaChatClient")
+    public ChatClient ollamaChatClient(
+        OllamaChatModel ollamaChatModel,
+        @Autowired(required = false) ToolCallbackProvider weatherToolCallbackProvider,
+        @Autowired(required = false) List<McpSyncClient> mcpSyncClients
+    ) {
+        log.info("=== Ollama ChatClient 초기화 ===");
+
+        ChatClient.Builder builder = ChatClient.builder(ollamaChatModel);
+
+        // Weather Tool
+        if (weatherToolCallbackProvider != null) {
+            log.info("✅ Weather Tool 등록");
+            builder = builder.defaultToolCallbacks(weatherToolCallbackProvider);
+        }
+
+        // MCP Tools (Builder 패턴)
+        if (mcpSyncClients != null && !mcpSyncClients.isEmpty()) {
+            log.info("✅ MCP Clients: {} 개", mcpSyncClients.size());
+
+            SyncMcpToolCallbackProvider mcpToolProvider = SyncMcpToolCallbackProvider.builder()
+                .mcpClients(mcpSyncClients)
                 .build();
+
+            builder = builder.defaultToolCallbacks(mcpToolProvider);
+        }
+
+        log.info("=== Ollama ChatClient 초기화 완료 ===");
+        return builder.build();
+    }
+
+    /**
+     * MCP 전용 ChatClient
+     */
+    @Bean(name = "ollamaWithMcpToolChatClient")
+    public ChatClient mcpOnlyChatClient(
+        AnthropicChatModel anthropicChatModel,
+        @Autowired(required = false) List<McpSyncClient> mcpSyncClients
+    ) {
+        log.info("=== MCP 전용 ChatClient 초기화 ===");
+
+        if (mcpSyncClients == null || mcpSyncClients.isEmpty()) {
+            log.warn("⚠️ MCP Client가 없습니다!");
+            return ChatClient.builder(anthropicChatModel).build();
+        }
+
+        log.info("✅ MCP Clients: {} 개", mcpSyncClients.size());
+
+        // Builder 패턴 사용
+        SyncMcpToolCallbackProvider mcpToolProvider = SyncMcpToolCallbackProvider.builder()
+            .mcpClients(mcpSyncClients)
+            .build();
+
+        return ChatClient.builder(anthropicChatModel)
+            .defaultToolCallbacks(mcpToolProvider)
+            .build();
     }
 }

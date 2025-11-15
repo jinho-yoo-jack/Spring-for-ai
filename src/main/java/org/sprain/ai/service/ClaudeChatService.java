@@ -1,8 +1,7 @@
 package org.sprain.ai.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sprain.ai.global.exception.ContextLengthExceededException;
+import org.sprain.ai.global.exception.custom.ContextLengthExceededException;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -44,7 +43,7 @@ public class ClaudeChatService implements ChatService {
         history.add(userMessage);
         org.springframework.ai.chat.model.ChatResponse response = promptWithHistory(question, history);
 
-        String assistantResponse = response.getResult().getOutput().getContent();
+        String assistantResponse = response.getResult().getOutput().getText();
         if (assistantResponse == null || assistantResponse.isBlank()) {
             throw new IllegalStateException("assistant response is null or blank");
         }
@@ -56,8 +55,7 @@ public class ClaudeChatService implements ChatService {
         TokenUsage tokenUsage = null;
         if (metadata != null && metadata.getUsage() != null) {
             var usage = metadata.getUsage();
-            Integer completionTokens = usage.getPromptTokens().intValue();
-            tokenUsage = new TokenUsage(usage.getPromptTokens().intValue(), completionTokens, usage.getTotalTokens().intValue());
+            tokenUsage = new TokenUsage(usage.getPromptTokens(), usage.getCompletionTokens(), usage.getTotalTokens());
         }
         return ChatResponse.of(assistantResponse, conversationId, tokenUsage);
     }

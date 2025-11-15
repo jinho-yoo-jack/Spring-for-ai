@@ -1,4 +1,4 @@
-package org.sprain.ai.service;
+package org.sprain.ai.global.helper.ai;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

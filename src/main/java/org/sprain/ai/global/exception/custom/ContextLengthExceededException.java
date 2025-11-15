@@ -1,6 +1,4 @@
-package org.sprain.ai.global.exception;
-
-import org.sprain.ai.global.GlobalException;
+package org.sprain.ai.global.exception.custom;
 
 public class ContextLengthExceededException extends RuntimeException {
     public ContextLengthExceededException() {
