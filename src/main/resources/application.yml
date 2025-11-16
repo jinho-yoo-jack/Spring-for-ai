@@ -12,15 +12,13 @@ spring:
   ai:
     mcp:
       client:
-        type: SYNC  # ⭐ 명시적으로 SYNC 지정
+        type: SYNC
         toolcallback:
-          enabled: true  # ⭐ 필수!
-
-        # SSE 연결 설정
+          enabled: true
         streamable-http:
           connections:
             weather-server:
-              url: http://localhost:8081  # ⭐ 포트 8081!
+              url: http://localhost:8081
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
       chat:

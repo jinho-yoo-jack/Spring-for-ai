@@ -1,6 +1,5 @@
 package org.sprain.ai.config.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.modelcontextprotocol.client.McpSyncClient;
 import jakarta.annotation.PostConstruct;
 import lombok.Setter;
@@ -10,8 +9,6 @@ import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.anthropic.api.AnthropicApi;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
-import org.springframework.ai.tool.ToolCallbackProvider;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,7 +61,7 @@ public class AnthropicConfig {
      * 4. ChatClient에 등록
      */
     @Bean(name = "claudeWithMcpToolsChatClient")
-    public ChatClient chatClient(
+    public ChatClient anthropicWithMcpToolsChatClient(
         ChatClient.Builder chatClientBuilder,
         List<McpSyncClient> mcpClients) {
 
@@ -81,17 +78,16 @@ public class AnthropicConfig {
             .build();
     }
 
-//    @Bean(name = "claudeChatClient")
-//    public ChatClient chatClient(
-//        ChatClient.Builder chatClientBuilder) {
-//
-//        // MCP Client들로부터 Tools를 가져와서 ChatClient에 등록
-//        return chatClientBuilder
-//            .defaultSystem("""
-//                당신은 친절하고 도움이 되는 AI 어시스턴트입니다.
-//                사용자의 질문에 정확하고 이해하기 쉽게 답변해주세요.
-//                """)
-//            .build();
-//    }
+    @Bean(name = "claudeChatClient")
+    public ChatClient anthropicChatClient(
+        ChatClient.Builder chatClientBuilder) {
+
+        return chatClientBuilder
+            .defaultSystem("""
+                당신은 친절하고 도움이 되는 AI 어시스턴트입니다.
+                사용자의 질문에 정확하고 이해하기 쉽게 답변해주세요.
+                """)
+            .build();
+    }
 
 }
