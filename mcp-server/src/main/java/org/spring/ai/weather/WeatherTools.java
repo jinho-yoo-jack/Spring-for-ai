@@ -1,15 +1,12 @@
-package org.sprain.ai.tools.weather;
+package org.spring.ai.weather;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sprain.ai.external.WeatherAPIs;
-import org.sprain.ai.tools.weather.dto.WeatherRequest;
-import org.sprain.ai.tools.weather.dto.WeatherResponse;
+import org.spring.ai.dto.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
-import org.springframework.stereotype.Component;
 import retrofit2.Call;
 
 import java.io.IOException;

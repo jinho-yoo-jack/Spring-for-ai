@@ -1,7 +1,7 @@
-package org.sprain.ai.tools.weather;
+package org.spring.ai.weather;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sprain.ai.tools.weather.dto.WeatherResponse;
+import org.spring.ai.dto.WeatherResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

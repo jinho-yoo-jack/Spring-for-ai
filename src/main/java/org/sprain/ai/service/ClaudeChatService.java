@@ -21,7 +21,8 @@ public class ClaudeChatService implements ChatService {
 
     private final ChatClient chatClient;
 
-    public ClaudeChatService(@Qualifier("claudeChatClient") ChatClient chatClient) {
+    public ClaudeChatService(
+        @Qualifier("claudeWithMcpToolsChatClient") ChatClient chatClient) {
         this.chatClient = chatClient;
     }
 
@@ -82,18 +83,18 @@ public class ClaudeChatService implements ChatService {
 
     private String prompt(String question) {
         return chatClient.prompt()
-                .user(question)
-                .call()
-                .content();
+            .user(question)
+            .call()
+            .content();
     }
 
     private org.springframework.ai.chat.model.ChatResponse promptWithHistory(String question, List<Message> history) {
         try {
             return chatClient.prompt()
-                    .messages(history)
-                    .user(question)
-                    .call()
-                    .chatResponse();
+                .messages(history)
+                .user(question)
+                .call()
+                .chatResponse();
         } catch (ContextLengthExceededException e) {
             throw new ContextLengthExceededException(e.getMessage());
         }
@@ -101,8 +102,8 @@ public class ClaudeChatService implements ChatService {
 
     private Flux<String> promptStream(String question) {
         return chatClient.prompt()
-                .user(question)
-                .stream()
-                .content();
+            .user(question)
+            .stream()
+            .content();
     }
 }

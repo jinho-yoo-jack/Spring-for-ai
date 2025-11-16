@@ -12,10 +12,15 @@ spring:
   ai:
     mcp:
       client:
-        sse:
+        type: SYNC  # ⭐ 명시적으로 SYNC 지정
+        toolcallback:
+          enabled: true  # ⭐ 필수!
+
+        # SSE 연결 설정
+        streamable-http:
           connections:
             weather-server:
-              url: http://localhost:8080
+              url: http://localhost:8081  # ⭐ 포트 8081!
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
       chat:
@@ -41,3 +46,7 @@ logging:
   level:
     org.springframework: INFO
     org.springframework.ai: DEBUG
+    org.springframework.ai.mcp: TRACE  # ⭐ TRACE로 상향
+    org.springframework.ai.mcp.client: TRACE  # ⭐ Client 상세 로그
+    io.modelcontextprotocol: DEBUG
+    reactor.netty: DEBUG  # ⭐ 네트워크 로그

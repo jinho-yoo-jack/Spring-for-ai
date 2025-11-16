@@ -1,4 +1,4 @@
-package org.sprain.ai.tools.weather.dto;
+package org.spring.ai.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;

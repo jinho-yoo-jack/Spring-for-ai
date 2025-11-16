@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import java.util.List;
 
@@ -24,11 +25,6 @@ import java.util.List;
 @Setter
 public class AnthropicConfig {
     private String apiKey;
-
-    @Value("${mcp.weather.server.jar-path}")
-    private String weatherServerJarPath;
-
-    private ObjectMapper objectMapper;
 
     @PostConstruct
     public void init() {
@@ -44,6 +40,7 @@ public class AnthropicConfig {
     }
 
     @Bean(name = "claudeChatModel")
+    @Primary
     public AnthropicChatModel anthropicChatModel(AnthropicApi anthropicApi) {
         String modelName = "claude-sonnet-4-20250514";
         return AnthropicChatModel.builder()
@@ -84,17 +81,17 @@ public class AnthropicConfig {
             .build();
     }
 
-    @Bean(name = "claudeChatClient")
-    public ChatClient chatClient(
-        ChatClient.Builder chatClientBuilder) {
-
-        // MCP Client들로부터 Tools를 가져와서 ChatClient에 등록
-        return chatClientBuilder
-            .defaultSystem("""
-                당신은 친절하고 도움이 되는 AI 어시스턴트입니다.
-                사용자의 질문에 정확하고 이해하기 쉽게 답변해주세요.
-                """)
-            .build();
-    }
+//    @Bean(name = "claudeChatClient")
+//    public ChatClient chatClient(
+//        ChatClient.Builder chatClientBuilder) {
+//
+//        // MCP Client들로부터 Tools를 가져와서 ChatClient에 등록
+//        return chatClientBuilder
+//            .defaultSystem("""
+//                당신은 친절하고 도움이 되는 AI 어시스턴트입니다.
+//                사용자의 질문에 정확하고 이해하기 쉽게 답변해주세요.
+//                """)
+//            .build();
+//    }
 
 }

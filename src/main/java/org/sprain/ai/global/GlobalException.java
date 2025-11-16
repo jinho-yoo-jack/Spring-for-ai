@@ -1,6 +1,5 @@
-package org.sprain.ai.global.exception;
+package org.sprain.ai.global;
 
-import org.sprain.ai.dto.ApiResponse;
 import org.sprain.ai.global.exception.custom.ContextLengthExceededException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

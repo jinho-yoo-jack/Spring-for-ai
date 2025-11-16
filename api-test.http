@@ -31,7 +31,7 @@ Content-Type: application/json
   "message": "긴 이야기를 들려줘"
 }
 
-### Postman/Insomnia 테스트
+### 5. Postman/Insomnia 테스트
 
 POST http://localhost:8080/api/chat
 Content-Type: application/json
@@ -41,25 +41,11 @@ Content-Type: application/json
   "conversationId": null
 }
 
-###
-GET http://localhost:8080/api/v1/tools/weather
-
-###
-GET http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?ServiceKey=VGm26lrei89KuhKKG%2BrhvSRsQ1n1kHUEnt6EjxfUzSNJUb4TAH4miOEl8JCix5p1pp8mm6zSrTWolibNkT7I0w%3D%3D&pageNo=1&numOfRows=1000&dataType=JSON&base_date=20250611&base_time=0600&nx=55&ny=127
-
-###
-GET https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?ServiceKey=VGm26lrei89KuhKKG+rhvSRsQ1n1kHUEnt6EjxfUzSNJUb4TAH4miOEl8JCix5p1pp8mm6zSrTWolibNkT7I0w==
-    &pageNo=1&numOfRows=1000&dataType=JSON&base_date=20250611&base_time=0600&nx=55&ny=127
-####
+#### 6. 기상청 API
 GET https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php?stn=108&authKey=FAVWlSB7Qa6FVpUgezGuHw
 
-###
-Asdfg1234!@#$
-FAVWlSB7Qa6FVpUgezGuHw
-
-
-###
-POST http://localhost:8080/api/mcp/chat/simple
+### 7. Anthropic Model + MCP Tools(Weather API)
+POST http://localhost:8080/api/chat/simple
 Content-Type: application/json
 
 {

@@ -1,6 +1,7 @@
 package org.sprain.ai.dto;
 
 public record ChatRequest(
+        String model,
         String message,
         String conversationId
 ) {

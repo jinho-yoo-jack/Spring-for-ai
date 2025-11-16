@@ -1,4 +1,4 @@
-package org.sprain.ai.dto;
+package org.sprain.ai.global;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,5 @@
 
-package org.sprain.ai.tools.weather.dto;
+package org.sprain.ai.external.mcp.weather.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
