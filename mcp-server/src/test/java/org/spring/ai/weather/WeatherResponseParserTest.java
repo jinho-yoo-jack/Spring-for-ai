@@ -1,9 +1,8 @@
-package org.sprain.ai.service.tool;
+package org.spring.ai.weather;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.sprain.ai.external.mcp.weather.WeatherDataParser;
-import org.sprain.ai.external.mcp.weather.dto.WeatherResponse;
+import org.spring.ai.dto.WeatherResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 

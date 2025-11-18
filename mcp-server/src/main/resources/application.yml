@@ -1,5 +1,5 @@
 server:
-  port: 8081  # MCP Server ?? ??
+  port: 8081
 
 spring:
   application:
@@ -13,7 +13,7 @@ spring:
         version: 1.0.0
         type: SYNC
         protocol: STREAMABLE
-        instructions: "?? ??? API? ??? ?? ?? ?? MCP Server"
+        instructions: "기상청 날씨 API MCP Server"
 
         capabilities:
           tool: true
@@ -21,14 +21,12 @@ spring:
           prompt: false
           completion: false
 
-# ?? API ??
 external:
   api:
     weather:
       url: https://apihub.kma.go.kr/
       api-key: ${OPEN_WEATHER_API_KEY:FAVWlSB7Qa6FVpUgezGuHw}
 
-# ??
 logging:
   level:
     org.springframework: INFO

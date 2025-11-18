@@ -1,1 +1,4 @@
 rootProject.name = 'Sprain'
+
+include 'spring-ai-app'
+include 'mcp-server'

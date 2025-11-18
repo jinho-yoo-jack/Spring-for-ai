@@ -1,17 +1,26 @@
-description = 'MCP Server Module'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
+description = 'Spring AI Application'
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.postgresql:postgresql'
 
-    // Spring AI MCP Server
+    // For AI - Spring AI dependencies
     implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
+    implementation 'org.springframework.ai:spring-ai-starter-model-anthropic'
+    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+
+    // Micrometer (ObservationRegistry용) For OllamaChatModel
+    implementation 'io.micrometer:micrometer-observation'
+    implementation 'io.micrometer:micrometer-core'
+
+    // MCP Client (외부 MCP Server와 연결)
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-client-webflux'
+
+    // 선택사항: MCP Server 직접 구현 (WebMVC)
     implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webmvc'
 
     // ===== Jackson (JSON 처리) =====
