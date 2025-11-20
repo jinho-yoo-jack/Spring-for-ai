@@ -6,6 +6,8 @@ import org.sprain.ai.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 import static org.sprain.ai.global.helper.ai.DocumentParser.*;
 
 @Service
@@ -17,7 +19,7 @@ public class DocumentProcessingService {
     /**
      * 영수증 정보 추출
      */
-    public ReceiptData extractReceipt(MultipartFile receiptImage) {
+    public ImageAnalysisResponseV2<ReceiptData> extractReceipt(MultipartFile receiptImage) throws IOException {
         String prompt = """
                 이 영수증에서 다음 정보를 JSON 형식으로 추출해주세요:
                 {
@@ -30,15 +32,13 @@ public class DocumentProcessingService {
                 }
                 """;
 
-        ImageAnalysisResponse response = visionService.analyzeImage(prompt, receiptImage);
-        // JSON 파싱하여 ReceiptData 객체로 변환
-        return parseReceiptData(response.analysis());
+        return visionService.analyzeImage(ImageAnalysis.of(prompt, receiptImage), ReceiptData.class);
     }
 
     /**
      * 명함 정보 추출
      */
-    public BusinessCard extractBusinessCard(MultipartFile cardImage) {
+    public ImageAnalysisResponseV2<BusinessCard> extractBusinessCard(MultipartFile cardImage) throws IOException {
         String prompt = """
                 이 명함에서 다음 정보를 추출해주세요:
                 - 이름
@@ -49,14 +49,13 @@ public class DocumentProcessingService {
                 - 주소
                 """;
 
-        ImageAnalysisResponse response = visionService.analyzeImage(prompt, cardImage);
-        return parseBusinessCard(response.analysis());
+        return visionService.analyzeImage(ImageAnalysis.of(prompt, cardImage), BusinessCard.class);
     }
 
     /**
      * 제품 결함 검사
      */
-    public DefectReport inspectProduct(MultipartFile productImage) {
+    public ImageAnalysisResponseV2<DefectReport> inspectProduct(MultipartFile productImage) throws IOException {
         String prompt = """
                 이 제품 이미지를 검사하여 다음을 확인해주세요:
                 1. 육안으로 보이는 결함
@@ -65,7 +64,6 @@ public class DocumentProcessingService {
                 4. 전체적인 품질 평가 (1-10점)
                 """;
 
-        ImageAnalysisResponse response = visionService.analyzeImage(prompt, productImage);
-        return parseDefectReport(response.analysis());
+        return visionService.analyzeImage(ImageAnalysis.of(prompt, productImage), DefectReport.class);
     }
 }
