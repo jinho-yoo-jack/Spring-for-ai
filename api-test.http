@@ -59,3 +59,11 @@ Content-Type: application/json
 {
   "question": "복리 후생에 대해서 설명해줘."
 }
+
+### 8. Function Calling
+POST http://localhost:8080/api/function/chat
+Content-Type: application/json
+
+{
+  "message": "오늘 서울 날씨 어때?"
+}

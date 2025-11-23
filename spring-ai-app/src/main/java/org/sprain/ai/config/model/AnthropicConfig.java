@@ -51,6 +51,8 @@ public class AnthropicConfig {
             .build();
     }
 
+
+
     /**
      * ChatClient with MCP Tools
      * <p>
@@ -81,6 +83,13 @@ public class AnthropicConfig {
     @Bean(name = "claudeChatClient")
     public ChatClient anthropicChatClient(
         ChatClient.Builder chatClientBuilder) {
+
+        AnthropicChatOptions options = AnthropicChatOptions.builder()
+            .temperature(0.7)
+            .maxTokens(4096)
+            .toolCallbacks(List.of())
+            .build();
+
 
         return chatClientBuilder
             .defaultSystem("""
