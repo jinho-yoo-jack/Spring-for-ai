@@ -3,8 +3,6 @@ package org.sprain.ai.service;
 import lombok.extern.slf4j.Slf4j;
 import org.sprain.ai.global.helper.function.ClaudeTools;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
