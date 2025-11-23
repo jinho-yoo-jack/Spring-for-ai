@@ -6,10 +6,17 @@ spring:
   application:
     name: Sprain
   datasource:
-    url: jdbc:postgresql://localhost:5432/sprain_vector
-    username: tony
-    password: stark
+    url: jdbc:postgresql://localhost:5432/teamsparta_vector
+    username: rtan
+    password: sparta
+    driver-class-name: org.postgresql.Driver
   ai:
+    vectorstore:
+      pgvector:
+        initialize-schema: false
+        dimensions: 2048
+        distance-type: cosine  # COSINE_DISTANCE → cosine
+        index-type: hnsw
     mcp:
       client:
         type: SYNC
@@ -28,8 +35,12 @@ spring:
           max-tokens: 4096
     ollama:
       base-url: http://localhost:11434  # OLLAMA 서버 주소
+      embedding:
+        options:
+          model: nomic-embed-text
       chat:
         options:
+
           model: qwen2.5:3b              # 사용할 모델
           temperature: 0.7               # 창의성 (0.0 ~ 1.0)
           num-predict: 1000              # 최대 생성 토큰 수# 로깅 설정 (선택사항)

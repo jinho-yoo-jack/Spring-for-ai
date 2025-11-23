@@ -3,16 +3,19 @@ package org.sprain.ai.config.model;
 import io.modelcontextprotocol.client.McpSyncClient;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.sprain.ai.global.advisor.AdvancedRagAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.ollama.OllamaChatModel;
+import org.springframework.ai.ollama.OllamaEmbeddingModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
+import org.springframework.ai.ollama.api.OllamaEmbeddingOptions;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 
@@ -20,8 +23,8 @@ import java.util.List;
 @Configuration
 @ConfigurationProperties(prefix = "spring.ai.ollama")
 @Setter
-@Profile("ollama")
 public class OllamaConfig {
+    private VectorStore vectorStore;
 
     private String baseUrl;
 
@@ -80,6 +83,16 @@ public class OllamaConfig {
                 SyncMcpToolCallbackProvider.builder()
                     .mcpClients(mcpClients)
                     .build())
+            .build();
+    }
+
+    @Bean(name = "customOllamaEmbedding")
+    public EmbeddingModel embeddingModel(OllamaApi ollamaApi) {
+        return OllamaEmbeddingModel.builder()
+            .ollamaApi(ollamaApi)
+            .defaultOptions(OllamaEmbeddingOptions.builder()
+                .model("qwen2.5:3b")
+                .build())
             .build();
     }
 }
