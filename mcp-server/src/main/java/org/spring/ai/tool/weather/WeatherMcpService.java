@@ -1,8 +1,8 @@
-package org.spring.ai.weather;
+package org.spring.ai.tool.weather;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.spring.ai.dto.WeatherResponse;
+import org.spring.ai.tool.weather.dto.WeatherResponse;
 import org.springaicommunity.mcp.annotation.McpTool;
 import org.springaicommunity.mcp.annotation.McpToolParam;
 import org.springframework.beans.factory.annotation.Value;

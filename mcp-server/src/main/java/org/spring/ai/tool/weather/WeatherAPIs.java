@@ -1,4 +1,4 @@
-package org.spring.ai.weather;
+package org.spring.ai.tool.weather;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

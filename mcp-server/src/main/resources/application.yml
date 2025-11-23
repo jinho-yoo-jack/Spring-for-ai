@@ -4,7 +4,8 @@ server:
 spring:
   application:
     name: weather-mcp-server
-
+  config:
+    import: optional:file:.env[.properties]
   ai:
     mcp:
       server:
@@ -17,8 +18,8 @@ spring:
 
         capabilities:
           tool: true
-          resource: false
-          prompt: false
+          resource: true
+          prompt: true
           completion: false
 
 external:
@@ -26,6 +27,22 @@ external:
     weather:
       url: https://apihub.kma.go.kr/
       api-key: ${OPEN_WEATHER_API_KEY:FAVWlSB7Qa6FVpUgezGuHw}
+
+# 문서 경로 설정
+company:
+  docs:
+    base-path: ${OPEN_WEATHER_API_KEY:FAVWlSB7Qa6FVpUgezGuHw}
+    cache:
+      enabled: true
+      ttl: 3600  # 1시간 캐싱
+
+# HTTP Server 엔드포인트 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
 
 logging:
   level:

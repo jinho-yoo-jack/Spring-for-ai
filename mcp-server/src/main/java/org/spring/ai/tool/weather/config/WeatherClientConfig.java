@@ -1,4 +1,4 @@
-package org.spring.ai.config;
+package org.spring.ai.tool.weather.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -6,7 +6,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
-import org.spring.ai.weather.WeatherAPIs;
+import org.spring.ai.tool.weather.WeatherAPIs;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -44,15 +44,7 @@ Content-Type: application/json
 #### 6. 기상청 API
 GET https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php?stn=108&authKey=FAVWlSB7Qa6FVpUgezGuHw
 
-### 7. Anthropic Model + MCP Tools(Weather API)
-POST http://localhost:8080/api/chat/simple
-Content-Type: application/json
-
-{
-  "message": "오늘 서울 날씨 어때?"
-}
-
-###
+### 7. RAG-TEST
 POST http://localhost:8080/api/rag/ask
 Content-Type: application/json
 
@@ -66,4 +58,20 @@ Content-Type: application/json
 
 {
   "message": "오늘 서울 날씨 어때?"
+}
+
+### 9. Anthropic Model + MCP Tools(Weather API)
+POST http://localhost:8080/api/chat/simple
+Content-Type: application/json
+
+{
+  "message": "오늘 서울 날씨 어때?"
+}
+
+### 10. MCP-Prompt Test
+POST http://localhost:8080/api/chat/simple
+Content-Type: application/json
+
+{
+  "message": "[PROMPT:java_code_review]\n\npublic class Example {\n  public static void main(String[] args) {\n    System.out.println(\"Hello\");\n  }\n}"
 }

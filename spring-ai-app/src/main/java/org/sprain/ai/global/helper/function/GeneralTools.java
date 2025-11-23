@@ -1,6 +1,6 @@
 package org.sprain.ai.global.helper.function;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.sprain.ai.global.helper.function.dto.calulator.CalculatorRequest;
 import org.sprain.ai.global.helper.function.dto.calulator.CalculatorResponse;
 import org.sprain.ai.global.helper.function.dto.common.CurrentTimeResponse;
@@ -8,27 +8,30 @@ import org.sprain.ai.global.helper.function.dto.query.UserQueryRequest;
 import org.sprain.ai.global.helper.function.dto.query.UserQueryResponse;
 import org.sprain.ai.global.helper.function.dto.weather.WeatherRequest;
 import org.sprain.ai.global.helper.function.dto.weather.WeatherResponse;
-import org.springframework.ai.tool.ToolCallback;
-import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Description;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
+@Slf4j
 @Configuration
-@RequiredArgsConstructor
-public class ClaudeFunctionCallbackConfig {
+public class GeneralTools {
 
     /**
      * 날씨 조회 함수
      */
     @Bean
-    public ToolCallback getWeatherCallback() {
-        Function<WeatherRequest, WeatherResponse> function = request -> {
+    @Description("특정 도시의 현재 날씨 정보를 조회합니다")
+    public Function<WeatherRequest, WeatherResponse> getWeather() {
+        return request -> {
+            log.info("날씨 조회: {}", request.city());
+
+            // 실제로는 외부 API 호출
+            // 여기서는 Mock 데이터 반환
             Random random = new Random();
             int temperature = 10 + random.nextInt(20);
             String[] conditions = {"맑음", "흐림", "비", "눈"};
@@ -41,19 +44,17 @@ public class ClaudeFunctionCallbackConfig {
                 LocalDateTime.now()
             );
         };
-
-        return FunctionToolCallback.builder("getWeather", function)
-            .description("특정 도시의 현재 날씨 정보를 조회합니다")
-            .inputType(WeatherRequest.class)
-            .build();
     }
 
     /**
      * 계산기 함수
      */
     @Bean
-    public ToolCallback calculatorCallback() {
-        Function<CalculatorRequest, CalculatorResponse> function = request -> {
+    @Description("두 숫자의 사칙연산을 수행합니다")
+    public Function<CalculatorRequest, CalculatorResponse> calculator() {
+        return request -> {
+            log.info("계산: {} {} {}", request.a(), request.operation(), request.b());
+
             double result = switch (request.operation()) {
                 case "add" -> request.a() + request.b();
                 case "subtract" -> request.a() - request.b();
@@ -69,19 +70,19 @@ public class ClaudeFunctionCallbackConfig {
 
             return new CalculatorResponse(result);
         };
-
-        return FunctionToolCallback.builder("calculator", function)
-            .description("두 숫자의 사칙연산을 수행합니다")
-            .inputType(CalculatorRequest.class)
-            .build();
     }
 
     /**
      * 데이터베이스 조회 함수
      */
     @Bean
-    public ToolCallback getUserInfoCallback() {
-        Function<UserQueryRequest, UserQueryResponse> function = request -> {
+    @Description("사용자 정보를 데이터베이스에서 조회합니다")
+    public Function<UserQueryRequest, UserQueryResponse> getUserInfo() {
+        return request -> {
+            log.info("사용자 조회: {}", request.userId());
+
+            // 실제로는 DB 조회
+            // Mock 데이터
             return new UserQueryResponse(
                 request.userId(),
                 "홍길동",
@@ -89,33 +90,22 @@ public class ClaudeFunctionCallbackConfig {
                 "010-1234-5678"
             );
         };
-
-        return FunctionToolCallback.builder("getUserInfo", function)
-            .description("사용자 정보를 데이터베이스에서 조회합니다")
-            .inputType(UserQueryRequest.class)
-            .build();
     }
 
     /**
      * 현재 시간 조회
      */
     @Bean
-    public ToolCallback getCurrentTimeCallback() {
-        Supplier<CurrentTimeResponse> supplier = () -> {
+    @Description("현재 날짜와 시간을 반환합니다")
+    public Function<Void, CurrentTimeResponse> getCurrentTime() {
+        return void_ -> {
+            log.info("현재 시간 조회");
+
             LocalDateTime now = LocalDateTime.now();
             return new CurrentTimeResponse(
                 now.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분"))
             );
         };
-
-        // Supplier는 FunctionToolCallback으로 변환
-        // Supplier를 Function<Void, T>로 래핑
-        Function<Void, CurrentTimeResponse> function = (Void v) -> supplier.get();
-
-        return FunctionToolCallback.builder("getCurrentTime", function)
-            .description("현재 날짜와 시간을 반환합니다")
-            .inputType(Void.class)
-            .build();
     }
 }

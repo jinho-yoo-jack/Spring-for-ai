@@ -2,7 +2,8 @@ package org.spring.ai.weather;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.spring.ai.dto.WeatherResponse;
+import org.spring.ai.tool.weather.WeatherDataParser;
+import org.spring.ai.tool.weather.dto.WeatherResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 

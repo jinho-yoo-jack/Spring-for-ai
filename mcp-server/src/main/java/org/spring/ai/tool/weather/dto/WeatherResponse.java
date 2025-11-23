@@ -1,5 +1,5 @@
 
-package org.spring.ai.dto;
+package org.spring.ai.tool.weather.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

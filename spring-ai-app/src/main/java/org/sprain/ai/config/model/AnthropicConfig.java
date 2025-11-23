@@ -4,10 +4,12 @@ import io.modelcontextprotocol.client.McpSyncClient;
 import jakarta.annotation.PostConstruct;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.sprain.ai.global.advisor.McpPromptAdvisor;
 import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.anthropic.api.AnthropicApi;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -51,6 +53,20 @@ public class AnthropicConfig {
             .build();
     }
 
+    /**
+     * MCP Prompt Advisor Bean
+     * MCP 서버에서 프롬프트를 가져와 적용하는 Advisor
+     */
+    @Bean
+    public McpPromptAdvisor mcpPromptAdvisor(List<McpSyncClient> mcpClients) {
+        return McpPromptAdvisor.builder()
+            .mcpClients(mcpClients)
+            .enableCache(true)
+            .cacheTtl(10 * 60 * 1000L) // 10분 캐시
+            .order(0) // 가장 먼저 실행
+            .build();
+    }
+
 
 
     /**
@@ -65,7 +81,8 @@ public class AnthropicConfig {
     @Bean(name = "claudeWithMcpToolsChatClient")
     public ChatClient anthropicWithMcpToolsChatClient(
         ChatClient.Builder chatClientBuilder,
-        List<McpSyncClient> mcpClients) {
+        List<McpSyncClient> mcpClients,
+        McpPromptAdvisor mcpPromptAdvisor) {
 
         // MCP Client들로부터 Tools를 가져와서 ChatClient에 등록
         return chatClientBuilder
@@ -73,6 +90,10 @@ public class AnthropicConfig {
                 당신은 친절하고 도움이 되는 AI 어시스턴트입니다.
                 사용자의 질문에 정확하고 이해하기 쉽게 답변해주세요.
                 """)
+            .defaultAdvisors(
+                mcpPromptAdvisor,
+                SimpleLoggerAdvisor.builder().build()
+            )
             .defaultToolCallbacks(
                 SyncMcpToolCallbackProvider.builder()
                     .mcpClients(mcpClients)

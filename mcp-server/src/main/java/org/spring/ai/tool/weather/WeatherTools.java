@@ -1,8 +1,10 @@
-package org.spring.ai.weather;
+package org.spring.ai.tool.weather;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.spring.ai.dto.*;
+import org.spring.ai.tool.weather.dto.WeatherRequest;
+import org.spring.ai.tool.weather.dto.WeatherResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +24,11 @@ public class WeatherTools {
     // ✅ application.yml에서 주입받도록 수정
     @Value("${external.api.weather.api-key}")
     private String apiKey;
+
+    @PostConstruct
+    public void init(){
+        log.info("[API-KEY][Weather] {}", apiKey);
+    }
 
     @Bean(name = "getCurrentWeather")
     @Description("특정 도시의 현재 날씨 정보를 조회합니다. 도시 이름(Seoul, Busan 등)을 입력하면 해당 지역의 기온, 습도, 풍속, 기압 등 상세한 날씨 정보를 제공합니다.")
