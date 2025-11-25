@@ -2,8 +2,6 @@ package org.sprain.ai.config.model;
 
 import io.modelcontextprotocol.client.McpSyncClient;
 import jakarta.annotation.PostConstruct;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.sprain.ai.config.RagConfig;
