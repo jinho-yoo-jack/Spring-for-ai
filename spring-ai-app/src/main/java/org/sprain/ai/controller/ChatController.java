@@ -30,7 +30,8 @@ public class ChatController {
     @PostMapping("/simple")
     public ResponseEntity<ChatResponse> simpleChat(@RequestBody Map<String, String> request) {
         String message = request.get("message");
-        ChatResponse response = chatService.chat(message);
+        String modelName = request.get("modelName");
+        ChatResponse response = chatService.chat(message, modelName);
         return ResponseEntity.ok(response);
     }
 
@@ -42,7 +43,8 @@ public class ChatController {
     public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest request) {
         ChatResponse response = chatService.chatWithHistory(
                 request.message(),
-                request.conversationId()
+                request.conversationId(),
+                request.model()
         );
         return ResponseEntity.ok(response);
     }

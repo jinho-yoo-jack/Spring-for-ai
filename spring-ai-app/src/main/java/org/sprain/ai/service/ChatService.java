@@ -7,9 +7,9 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 
 public interface ChatService {
-    ChatResponse chat(String question);
+    ChatResponse chat(String question, String modelName);
 
-    ChatResponse chatWithHistory(String question, String conversationId);
+    ChatResponse chatWithHistory(String question, String conversationId, String modelName);
 
     Flux<String> chatStream(String question);
 

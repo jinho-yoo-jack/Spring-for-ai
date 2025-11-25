@@ -62,7 +62,7 @@ public class AdvancedRagAdvisor implements BaseAdvisor {
             if (config.isRequireDocuments()) {
                 // 문서가 필수인 경우 에러 메시지 추가
                 SystemMessage noDocsMessage = new SystemMessage(
-                    "죄송하지만 관련 문서를 찾을 수 없어 답변드릴 수 없습니다."
+                        "죄송하지만 관련 문서를 찾을 수 없어 답변드릴 수 없습니다."
                 );
 
                 List<Message> messages = new ArrayList<>();
@@ -70,9 +70,9 @@ public class AdvancedRagAdvisor implements BaseAdvisor {
                 messages.addAll(chatClientRequest.prompt().getInstructions());
 
                 return ChatClientRequest.builder()
-                    .prompt(new Prompt(messages, chatClientRequest.prompt().getOptions()))
-                    .context(chatClientRequest.context())
-                    .build();
+                        .prompt(new Prompt(messages, chatClientRequest.prompt().getOptions()))
+                        .context(chatClientRequest.context())
+                        .build();
             }
 
             return chatClientRequest;
@@ -85,8 +85,8 @@ public class AdvancedRagAdvisor implements BaseAdvisor {
 
         // 시스템 프롬프트 생성
         String systemPrompt = config.getSystemPromptTemplate()
-            .replace("{context}", context)
-            .replace("{query}", userQuery);
+                .replace("{context}", context)
+                .replace("{query}", userQuery);
 
         SystemMessage systemMessage = new SystemMessage(systemPrompt);
 
@@ -96,18 +96,18 @@ public class AdvancedRagAdvisor implements BaseAdvisor {
         messages.addAll(chatClientRequest.prompt().getInstructions());
 
         Prompt enrichedPrompt = new Prompt(
-            messages,
-            chatClientRequest.prompt().getOptions()
+                messages,
+                chatClientRequest.prompt().getOptions()
         );
 
         // Context 저장
         return ChatClientRequest.builder()
-            .prompt(enrichedPrompt)
-            .context(chatClientRequest.context())
-            .context("rag_documents", relevantDocs)
-            .context("rag_query", userQuery)
-            .context("rag_sources", extractSources(relevantDocs))
-            .build();
+                .prompt(enrichedPrompt)
+                .context(chatClientRequest.context())
+                .context("rag_documents", relevantDocs)
+                .context("rag_query", userQuery)
+                .context("rag_sources", extractSources(relevantDocs))
+                .build();
     }
 
     @Override
@@ -120,36 +120,21 @@ public class AdvancedRagAdvisor implements BaseAdvisor {
         @SuppressWarnings("unchecked")
         List<String> sources = (List<String>) chatClientResponse.context().get("rag_sources");
 
-        if (sources != null && !sources.isEmpty()) {
-            String sourcesText = "\n\n**참고 문서:**\n" +
-                sources.stream()
-                    .map(s -> "- " + s)
-                    .collect(Collectors.joining("\n"));
-
-            // chatResponse에서 content 가져오기
-            String originalContent = "";
-            if (chatClientResponse.chatResponse() != null) {
-                originalContent = chatClientResponse.chatResponse()
-                    .getResult()
-                    .getOutput()
-                    .getText();
-            }
-
-            String enhancedContent = originalContent + sourcesText;
-
-            // 새로운 ChatResponse 생성
-            ChatResponse newChatResponse = ChatResponse.builder()
-                .from(chatClientResponse.chatResponse())
-                .metadata("sources", sources)
-                .build();
-
-            return ChatClientResponse.builder()
-                .chatResponse(newChatResponse)
-                .context(chatClientResponse.context())
-                .build();
+        if (sources == null || sources.isEmpty()) {
+            return chatClientResponse;
         }
 
-        return chatClientResponse;
+        // 출처 텍스트 포맷팅
+        String sourcesText = "\n\n**참고 문서:**\n" +
+                sources.stream()
+                        .map(s -> "- " + s)
+                        .collect(Collectors.joining("\n"));
+
+        // 🔥 수정된 부분: mutate() 사용
+        return chatClientResponse.mutate()
+                .context("formatted_sources", sourcesText)  // 포맷된 출처 저장
+                .context("source_list", sources)            // 원본 출처 리스트도 저장
+                .build();
     }
 
     /**
@@ -157,9 +142,9 @@ public class AdvancedRagAdvisor implements BaseAdvisor {
      */
     private List<Document> searchDocuments(String query) {
         SearchRequest.Builder searchBuilder = SearchRequest.builder()
-            .query(query)
-            .topK(config.getTopK())
-            .similarityThreshold(config.getSimilarityThreshold());
+                .query(query)
+                .topK(config.getTopK())
+                .similarityThreshold(config.getSimilarityThreshold());
 
         // 필터 적용
         if (config.getFilterExpression() != null) {
@@ -208,18 +193,18 @@ public class AdvancedRagAdvisor implements BaseAdvisor {
      */
     private List<String> extractSources(List<Document> documents) {
         return documents.stream()
-            .map(doc -> {
-                Map<String, Object> metadata = doc.getMetadata();
-                if (metadata != null) {
-                    String filename = (String) metadata.get("filename");
-                    if (filename != null) {
-                        return filename;
+                .map(doc -> {
+                    Map<String, Object> metadata = doc.getMetadata();
+                    if (metadata != null) {
+                        String filename = (String) metadata.get("filename");
+                        if (filename != null) {
+                            return filename;
+                        }
                     }
-                }
-                return "알 수 없음";
-            })
-            .distinct()
-            .collect(Collectors.toList());
+                    return "알 수 없음";
+                })
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     /**

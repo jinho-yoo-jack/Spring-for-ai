@@ -1,17 +1,19 @@
 -- ================================================
 -- pgvector extension 활성화
 -- ================================================
-CREATE EXTENSION IF NOT EXISTS vector;
+CREATE
+EXTENSION IF NOT EXISTS vector;
 
 -- ================================================
 -- vector_store 테이블 생성
 -- ================================================
-CREATE TABLE IF NOT EXISTS vector_store (
-                                            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                                            content TEXT NOT NULL,
-                                            metadata JSONB,
-                                            embedding vector(2048),  -- dimensions 확인!
-                                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS vector_store
+(
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    content    TEXT NOT NULL,
+    metadata JSONB,
+    embedding vector(2048), -- dimensions 확인!
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ================================================
@@ -19,28 +21,29 @@ CREATE TABLE IF NOT EXISTS vector_store (
 -- ================================================
 CREATE INDEX idx_vector_store_embedding
     ON vector_store
-        USING ivfflat (embedding vector_cosine_ops)
+    USING ivfflat (embedding vector_cosine_ops)
     WITH (lists = 100);
 
 CREATE INDEX IF NOT EXISTS idx_vector_store_metadata
     ON vector_store
-        USING gin (metadata jsonb_path_ops);
+    USING gin (metadata jsonb_path_ops);
 
 
 -- ================================================
 -- documents 테이블 생성
 -- ================================================
-CREATE TABLE IF NOT EXISTS documents (
-                                         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                                         filename VARCHAR(255) NOT NULL,
-                                         content TEXT NOT NULL,
-                                         content_type VARCHAR(50) NOT NULL,
-                                         uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                         chunk_count INTEGER NOT NULL,
-                                         metadata TEXT,
+CREATE TABLE IF NOT EXISTS documents
+(
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    filename     VARCHAR(255) NOT NULL,
+    content      TEXT         NOT NULL,
+    content_type VARCHAR(50)  NOT NULL,
+    uploaded_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    chunk_count  INTEGER      NOT NULL,
+    metadata     TEXT,
 
     -- 인덱스를 위한 컬럼 (선택사항)
-                                         CONSTRAINT chk_chunk_count_positive CHECK (chunk_count >= 0)
+    CONSTRAINT chk_chunk_count_positive CHECK (chunk_count >= 0)
 );
 
 -- ================================================
@@ -78,7 +81,6 @@ COMMENT ON COLUMN documents.metadata IS 'JSON 형태의 추가 메타데이터';
 -- 확인 메시지
 -- ================================================
 DO $$
-    BEGIN
-        RAISE NOTICE 'Vector store initialized successfully';
-    END $$;
+BEGIN RAISE NOTICE 'Vector store initialized successfully';
+END $$;
 
