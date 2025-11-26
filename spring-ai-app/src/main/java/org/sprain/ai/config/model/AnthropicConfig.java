@@ -12,6 +12,8 @@ import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.anthropic.api.AnthropicApi;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
+import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @ConfigurationProperties(prefix = "spring.ai.anthropic")
@@ -58,21 +61,6 @@ public class AnthropicConfig {
     }
 
     /**
-     * MCP Prompt Advisor Bean
-     * MCP 서버에서 프롬프트를 가져와 적용하는 Advisor
-     */
-    @Bean
-    public McpPromptAdvisor mcpPromptAdvisor(List<McpSyncClient> mcpClients) {
-        return McpPromptAdvisor.builder()
-                .mcpClients(mcpClients)
-                .enableCache(true)
-                .cacheTtl(10 * 60 * 1000L) // 10분 캐시
-                .order(0) // 가장 먼저 실행
-                .build();
-    }
-
-
-    /**
      * ChatClient with MCP Tools
      * <p>
      * SSE 방식:
@@ -85,18 +73,20 @@ public class AnthropicConfig {
     public ChatClient anthropicWithMcpToolsChatClient(
             ChatClient.Builder chatClientBuilder,
             List<McpSyncClient> mcpClients,
-            McpPromptAdvisor mcpPromptAdvisor) {
+            Map<String, Advisor> advisorFactory) {
 
-        // MCP Client들로부터 Tools를 가져와서 ChatClient에 등록
+        log.info("=== ChatClient 초기화 (동적 Advisors 적용) ===");
+        log.info("등록된 Advisor 수: {}", advisorFactory.size());
+        advisorFactory.forEach((name, advisor) ->
+                log.info("  - {}: {} (order: {})", name, advisor.getClass().getSimpleName(), advisor.getOrder())
+        );
+
         return chatClientBuilder
                 .defaultSystem("""
                         당신은 친절하고 도움이 되는 AI 어시스턴트입니다.
                         사용자의 질문에 정확하고 이해하기 쉽게 답변해주세요.
                         """)
-                .defaultAdvisors(
-                        mcpPromptAdvisor,
-                        SimpleLoggerAdvisor.builder().build()
-                )
+                .defaultAdvisors(advisorFactory.values().toArray(new Advisor[0]))
                 .defaultToolCallbacks(
                         SyncMcpToolCallbackProvider.builder()
                                 .mcpClients(mcpClients)
