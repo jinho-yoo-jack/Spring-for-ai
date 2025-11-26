@@ -24,23 +24,33 @@ public class WeatherMcpService {
      * ✅ @McpTool 어노테이션으로 MCP Tool 자동 등록
      * - 메서드 이름이 자동으로 Tool 이름이 됨
      * - 파라미터가 자동으로 Tool Arguments가 됨
+     *  대안
+     *    description = "특정 도시의 날씨 정보를 조회합니다. " +
+     *       "현재, 오늘, 지금, 실시간 날씨를 확인할 수 있으며, " +
+     *       "도시 이름을 입력하면 기온, 습도, 풍속, 기압 등 " +
+     *       "상세한 날씨 정보를 제공합니다."
+     *   또는 더 간결하게:
+     *   description = "특정 도시의 날씨 정보(현재/오늘/실시간)를 조회합니다. " +
+     *       "도시 이름을 입력하면 기온, 습도, 풍속, 기압 등 " +
+     *       "상세한 날씨 정보를 제공합니다."
      */
     @McpTool(
-        name = "get_current_weather",  // Tool 이름
-        description = "특정 도시의 현재 날씨 정보를 조회합니다. " +
-            "도시 이름을 입력하면 기온, 습도, 풍속, 기압 등 " +
-            "상세한 날씨 정보를 제공합니다."
+            name = "get_current_weather",  // Tool 이름
+            description = "특정 도시의 실시간 날씨 정보를 조회합니다. " +
+                    "도시 이름을 입력하면 최신 기온, 습도, 풍속, 기압 등 " +
+                    "상세한 날씨 정보를 제공합니다."
+
     )
     public String getCurrentWeather(
-        @McpToolParam(
-            description = "날씨를 조회할 도시 이름 (예: Seoul, Busan, Jeju 등)",
-            required = true  // 필수 파라미터
-        ) String city,
+            @McpToolParam(
+                    description = "날씨를 조회할 도시 이름 (예: Seoul, Busan, Jeju 등)",
+                    required = true  // 필수 파라미터
+            ) String city,
 
-        @McpToolParam(
-            description = "온도 단위 (celsius 또는 fahrenheit, 기본값: celsius)",
-            required = false  // 선택 파라미터
-        ) String unit
+            @McpToolParam(
+                    description = "온도 단위 (celsius 또는 fahrenheit, 기본값: celsius)",
+                    required = false  // 선택 파라미터
+            ) String unit
     ) {
         try {
             log.info("🌤️ 날씨 조회 요청 - 도시: {}, 단위: {}", city, unit);
@@ -50,7 +60,7 @@ public class WeatherMcpService {
 
             // 2. 기본값 설정
             String tempUnit = (unit == null || unit.isEmpty())
-                ? "celsius" : unit.toLowerCase();
+                    ? "celsius" : unit.toLowerCase();
 
             // 3. 기상청 API 호출
             var response = weatherAPIs.getWeather(apiKey, stn).execute();
@@ -61,7 +71,7 @@ public class WeatherMcpService {
 
             // 4. 데이터 파싱
             WeatherResponse weatherResponse =
-                WeatherDataParser.parse(response.body());
+                    WeatherDataParser.parse(response.body());
 
             if (weatherResponse == null) {
                 throw new RuntimeException("날씨 데이터 파싱 실패");
@@ -97,7 +107,7 @@ public class WeatherMcpService {
             case "jeju", "제주" -> 184;
             case "gangneung", "강릉" -> 105;
             default -> throw new IllegalArgumentException(
-                String.format("지원하지 않는 도시입니다: %s", city)
+                    String.format("지원하지 않는 도시입니다: %s", city)
             );
         };
     }
@@ -108,7 +118,7 @@ public class WeatherMcpService {
     private void convertToFahrenheit(WeatherResponse response) {
         if (response.getTemperature() != null) {
             response.setTemperature(
-                celsiusToFahrenheit(response.getTemperature())
+                    celsiusToFahrenheit(response.getTemperature())
             );
         }
         // ... 다른 온도 필드들도 변환
@@ -122,22 +132,22 @@ public class WeatherMcpService {
      * 날씨 응답을 읽기 쉬운 문자열로 포맷팅
      */
     private String formatWeatherResponse(
-        WeatherResponse response,
-        String city,
-        String unit) {
+            WeatherResponse response,
+            String city,
+            String unit) {
 
         String tempUnit = "celsius".equalsIgnoreCase(unit) ? "°C" : "°F";
 
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("📍 **%s 날씨 정보**\n\n", city));
         sb.append(String.format("🌡️ 기온: %.1f%s\n",
-            response.getTemperature(), tempUnit));
+                response.getTemperature(), tempUnit));
         sb.append(String.format("💧 습도: %.0f%%\n",
-            response.getHumidity()));
+                response.getHumidity()));
         sb.append(String.format("💨 풍속: %.1f m/s\n",
-            response.getWindSpeed()));
+                response.getWindSpeed()));
         sb.append(String.format("🎈 기압: %.1f hPa\n",
-            response.getPressure()));
+                response.getPressure()));
 
         return sb.toString();
     }

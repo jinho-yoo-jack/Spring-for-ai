@@ -2,7 +2,8 @@ POST http://localhost:8080/api/chat/simple
 Content-Type: application/json
 
 {
-  "message": "복리 후생 알려줘"
+  "message": "지금 서울 날씨 알려줘.",
+  "modelName": "claudeWithMcpTools"
 }
 
 ### 2. 대화 히스토리를 유지하는 채팅
